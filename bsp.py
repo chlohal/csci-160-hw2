@@ -1,7 +1,8 @@
 from typing import Union, Literal
 
 Ordering = Union[Literal["Less"], Literal["More"], Literal["Equal"]]
-TreeOrdering = Union[Literal["PostOrder"], Literal["PreOrder"], Literal["InOrder"]]
+TreeOrdering = Union[Literal["PostOrder"],
+                     Literal["PreOrder"], Literal["InOrder"]]
 Point = tuple[float, float]
 Line = tuple[Point, Point]
 
@@ -103,7 +104,7 @@ def find_axial_line_index(lines: list[Line]):
     return 0
 
 
-def svg_of_line(line: Line, stroke_color = "black") -> str:
+def svg_of_line(line: Line, stroke_color="black") -> str:
     (x1, y1), (x2, y2) = line
 
     return f'<path d="M {x1} {y1} L {x2} {y2}" style="stroke: {stroke_color}; stroke-width: 0.1"/>'
@@ -126,7 +127,7 @@ class BinarySpaceTree:
         self.left = l
         self.right = r
         self.value = v
-    
+
     def lines(self, order: TreeOrdering = "InOrder") -> list[Line]:
         left_lines = []
         right_lines = []
@@ -138,9 +139,9 @@ class BinarySpaceTree:
         match order:
             case "InOrder": return left_lines + self.value + right_lines
             case "PostOrder": return left_lines + right_lines + self.value
-            case "PreOrder": return  self.value + left_lines + right_lines
-    
-    def child_lines(self): 
+            case "PreOrder": return self.value + left_lines + right_lines
+
+    def child_lines(self):
         left_lines = []
         right_lines = []
         if self.left != None:
@@ -155,7 +156,7 @@ class BinarySpaceTree:
 
     def pre_order_lines(self):
         return self.lines("PreOrder")
-    
+
     def in_order_lines(self):
         return self.lines("InOrder")
 
@@ -215,8 +216,9 @@ if __name__ == "__main__":
              ]
 
     space_tree = bsp(image, 0)
-    
+
     if "svg" in sys.argv:
-        print(svg_of_line_system(space_tree.in_order_lines(), view_box=(-1, -1, 12, 12)))
+        print(svg_of_line_system(
+            space_tree.in_order_lines(), view_box=(-1, -1, 12, 12)))
     else:
         space_tree.print_in_order_repr()
