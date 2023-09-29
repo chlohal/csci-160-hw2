@@ -97,9 +97,9 @@ def is_single_point(line: Line) -> bool:
 
 def find_axial_line_index(lines: list[Line]):
     for i, line in enumerate(lines):
-        if line[0][0] == line[1][0]:
+        if is_vertical(line):
             return i
-        if line[0][1] == line[1][1]:
+        if get_slope(line) == 0:
             return i
     return 0
 
@@ -172,7 +172,7 @@ def bsp(image_lines: list[Line], start_partition_at_index: Union[int, None] = No
     if len(image_lines) == 1:
         return BinarySpaceTree(None, None, image_lines)
     if len(image_lines) == 0:
-        return None
+        return BinarySpaceTree(None, None, [])
 
     partition_line = image_lines[start_partition_at_index]
 
