@@ -51,9 +51,25 @@ sed ${1}q #Get first $k$ lines
 ```
 
 > [!NOTE]  
-> This is written in POSIX shell script. Each line is an instruction, and the pipe characters (`|`) direct the output of one line to the input of the next. The list of words is an implicit input to the first line, and the first argument, $k$ is referred to by `${1}`.
+> This is written in POSIX shell script. Each line is an instruction, and the pipe characters (`|`) direct the output of one line to the input of the next. The list of words is an implicit input to the first line, and the first argument, k, is referred to by `${1}`.
 > 
-> You don't need to understand it in depth, but make sure you understand what each line does on a basic level before reading further.
+> You don't need to understand it in depth; a direct translation into pseudocode follows: 
+
+```python 
+first_items(k, 
+	sort(order=reverse, by=len, 
+		unique_runs(withcount=True,
+			sort(
+				lowercase(
+					words(
+						input_file
+					)
+				)
+			)
+		)
+	)
+)
+```
 
 The adaptation and specialization of this solution for our specific problem will yield a working, efficient, 
 and easy to understand algorithm.
