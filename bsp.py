@@ -10,17 +10,17 @@ def point_in_front_of_line(line: Line, point: Point) -> Ordering:
     x, y = point
 
     if is_vertical(line):
-        if x > x1:
+        if x < x1:
             return "More"
-        elif x < x1:
+        elif x > x1:
             return "Less"
         else:
             return "Equal"
     else:
         slope = get_slope(line)
-        if (y - y2) < slope * (x - x2):
+        if (y - y2) > slope * (x - x2):
             return "More"
-        elif (y - y2) > slope * (x - x2):
+        elif (y - y2) < slope * (x - x2):
             return "Less"
         else:
             return "Equal"
@@ -81,6 +81,10 @@ def split_line_segment_with_line(line: Line, segment: Line) -> list[tuple[Line, 
                 ((intersection, point_b), point_b_position)
                 ]
 
+def is_single_point(line: Line) -> bool:
+    (x1, y1), (x2, y2) = line
+
+    return x1 == x2 and y1 == y2
 
 def find_axial_line_index(lines: list[Line]):
     for i, line in enumerate(lines):
@@ -91,7 +95,7 @@ def find_axial_line_index(lines: list[Line]):
     return 0
 
 
-class Node:
+class BinarySpaceTree:
     left = None
     right = None
     value: list[Line]
@@ -109,14 +113,14 @@ class Node:
         if self.right != None: self.right.print_in_order_repr()
 
 
-def bsp(image_lines: list[Line], start_partition_at_index: Union[int, None] = None) -> Node:
+def bsp(image_lines: list[Line], start_partition_at_index: Union[int, None] = None) -> Union[BinarySpaceTree, None]:
     if start_partition_at_index == None:
         start_partition_at_index = find_axial_line_index(image_lines)
 
     if len(image_lines) == 1:
-        return Node(None, None, image_lines)
+        return BinarySpaceTree(None, None, image_lines)
     if len(image_lines) == 0:
-        return Node(None, None, []) 
+        return None
 
     partition_line = image_lines[start_partition_at_index]
 
@@ -131,6 +135,9 @@ def bsp(image_lines: list[Line], start_partition_at_index: Union[int, None] = No
         split_and_ordered = split_line_segment_with_line(
             partition_line, segment)
         for sub_segment, ordering in split_and_ordered:
+            # Ignore lines like (x, y), (x, y) which only cover a single point
+            if is_single_point(sub_segment): continue
+
             match ordering:
                 case "Less": left.append(sub_segment)
                 case "More": right.append(sub_segment)
@@ -139,7 +146,7 @@ def bsp(image_lines: list[Line], start_partition_at_index: Union[int, None] = No
     left_node = bsp(left)
     right_node = bsp(right)
 
-    return Node(left_node, right_node, on_partition)
+    return BinarySpaceTree(left_node, right_node, on_partition)
 
 
 if __name__ == "__main__":
