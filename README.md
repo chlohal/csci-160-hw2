@@ -1,6 +1,36 @@
 # Homework 2
 
 Will, Wil, Chloe
+https://github.com/chlohal/cs-160-hw2
+
+## Question 1
+
+Our code for this question is written in a library format. The "user" is someone who is using our code-- specifically, the `bsp(image_lines, start_partition_at_index)` function.
+
+We have some testing code designed for command-line input, but it's only for testing
+
+### Input Format
+
+We take take input in a `list` of `Line` objects, which are `tuple`s of two `Point`s: the start point and the end point of the line segment. A `Point` is a tuple of two `float`s, the $x$ and $y$ coordinates. In full, the input image is a `List[tuple[tuple[float, float], tuple[float, float]]]`.
+
+The user can select the initial partition line with an optional argument.
+
+### Output Format 
+
+We output a `BinarySpaceTree`, which is a classic binary tree with a `list[Line]` as its value type. Each segment holds a list of the lines that define its leaf. This list will usually hold 1 segment, but in the edge case that multiple input segments are colinear, it will hold multiple. The `BinarySpaceTree` provides convenience methods to traverse the tree.
+
+### Code Summary
+
+Our code, in abstract, does the following:
+- Take a list of line segments
+- Choose a line to use in **partitioning**. If the user specifies a partitioning line, we use that; otherwise, we look for a line that is *axial* (either vertical or horizontal)
+- If the list of lines is empty, return an empty node. If it only has 1 line, return a leaf with the line.
+- Otherwise: split the list into segments *in front* of the partition and segments *behind* the partition.
+	- Segments that cross the partition will be split into two.
+- Recursively operate on the list of left segments and the list of right segments, building a node from each list.
+- Return a node with the partition as a value; the front node as one side; and the behind node as the other side
+
+## Question 2
 
 ## Question 3
 
