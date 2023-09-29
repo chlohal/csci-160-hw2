@@ -1,6 +1,7 @@
 from typing import Union, Literal
 
 Ordering = Union[Literal["Less"], Literal["More"], Literal["Equal"]]
+TreeOrdering = Union[Literal["PostOrder"], Literal["PreOrder"], Literal["InOrder"]]
 Point = tuple[float, float]
 Line = tuple[Point, Point]
 
@@ -111,7 +112,7 @@ def svg_of_line(line: Line, stroke_color = "black") -> str:
 def svg_of_line_system(lines: list[Line], view_box: tuple[float, float, float, float] = (0, 0, 10, 10)) -> str:
     view_box_svg_attr = " ".join(str(n) for n in view_box)
 
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="{view_box_svg_attr}">'
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="{view_box_svg_attr}">'
             + "".join(svg_of_line(line) for line in lines)
             + "</svg>")
 
@@ -125,8 +126,21 @@ class BinarySpaceTree:
         self.left = l
         self.right = r
         self.value = v
+    
+    def lines(self, order: TreeOrdering = "InOrder") -> list[Line]:
+        left_lines = []
+        right_lines = []
+        if self.left != None:
+            left_lines = self.left.lines(order)
+        if self.right != None:
+            right_lines = self.right.lines(order)
 
-    def in_order_lines(self):
+        match order:
+            case "InOrder": return left_lines + self.value + right_lines
+            case "PostOrder": return left_lines + right_lines + self.value
+            case "PreOrder": return  self.value + left_lines + right_lines
+    
+    def child_lines(self): 
         left_lines = []
         right_lines = []
         if self.left != None:
@@ -134,7 +148,16 @@ class BinarySpaceTree:
         if self.right != None:
             right_lines = self.right.in_order_lines()
 
-        return left_lines + self.value + right_lines
+        return left_lines + right_lines
+
+    def post_order_lines(self):
+        return self.lines("PostOrder")
+
+    def pre_order_lines(self):
+        return self.lines("PreOrder")
+    
+    def in_order_lines(self):
+        return self.lines("InOrder")
 
     def print_in_order_repr(self):
         for line in self.in_order_lines():
@@ -194,6 +217,6 @@ if __name__ == "__main__":
     space_tree = bsp(image, 0)
     
     if "svg" in sys.argv:
-        print(svg_of_line_system(space_tree.in_order_lines()))
+        print(svg_of_line_system(space_tree.in_order_lines(), view_box=(-1, -1, 12, 12)))
     else:
-        space_tree.print_in_order_repr()    
+        space_tree.print_in_order_repr()
