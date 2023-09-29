@@ -175,4 +175,4 @@ Further optimizations could fold the final iteration into the `sort`ing code, bu
 
 This gives a runtime complexity of $O(\text{sort} + n)$ = $O(n \log n + n)$ = $O(n \log n)$, since an optimized comparison sort will have a time complexity of $O(n \log n)$.
 
-The correctness is able to be derived from McIlroy's original solution for an arbitrary $k$, which is assumed to be correct. If his code is correct, then our algorithm is correct.
+The correctness is able to be derived from McIlroy's original solution for an arbitrary $k$, which is assumed to be correct. If his code is correct, and all permissible assumptions from the assignment hold, then our algorithm is correct-- our algorithm is essentially a specialized version of his.
