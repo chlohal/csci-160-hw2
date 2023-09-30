@@ -50,15 +50,13 @@ sort -rn | #Sort by number (count), reversed (descending)
 sed ${1}q #Get first $k$ lines
 ```
 
-> [!NOTE]  
-> This is written in POSIX shell script. Each line is an instruction, and the pipe characters (`|`) direct the output of one line to the input of the next. The list of words is an implicit input to the first line, and the first argument, k, is referred to by `${1}`.
-> 
-> You don't need to understand it in depth; a direct translation into pseudocode follows: 
+This is his original solution written in POSIX shell script, which can be hard to understand. Here is a direct translation into pseudocode.
+
 
 ```python 
-first_items(k, 
-	sort(order=reverse, by=len, 
-		unique_runs(withcount=True,
+first_items(n=k, 
+	sort(order=descending, by=len, 
+		unique_runs(
 			sort(
 				lowercase(
 					words(
@@ -71,121 +69,104 @@ first_items(k,
 )
 ```
 
+> [!NOTE]
+> A **run** in a list is defined as being a contiguous subarray where all the values are the same. For example, in `[1,2,3]`, there are 3 runs: `[1]`, `[2]`, and `[3]`. In `[2,2,2]`, there is only 1 run: `[2,2,2]`. This will be important later.
+
+
 The adaptation and specialization of this solution for our specific problem will yield a working, efficient, 
 and easy to understand algorithm.
 
 ### Simplification
 
-First, we will remove the word separation code. Since input is already provided as a list of IDs, we don't need to process a file for words.
+First, we'll change McIlroy's program to be a function instead of a full script. We can also remove the word separation code. Since input is already provided as a list of IDs, we don't need to process a file for words or make sure that the words are normalized to lowercase.
 
-```diff
-- tr -cs A-Za-z'
-- ' |
-- tr A-Z a-z |
-  sort |
-  uniq -c |
-  sort -rn |
-  sed ${1}q
-```
-We can also use a more efficient routine for finding the first $k$ items, since $k$ is always $1$.
-
-```diff 
-  sort |
-  uniq -c |
-  sort -rn |
-- sed ${1}q
-+ sed 1q 
+```python 
+def most_common_k(word_list, k):
+	return first_items(n=k, 
+		sort(order=descending, by=len, 
+			unique_runs(
+				sort(
+					word_list
+				)
+			)
+		)
+	)
 ```
 
+We can also use a more efficient method to find the first $k$ items, since $k$ is always $1$.
+
+```python
+def most_common_1(word_list):
+	return sort(order=descending, by=len, 
+		unique_runs(
+			sort(
+				word_list
+			)
+		)
+	)[0]
+```
 ### Specialization 
 
-Since we're only looking for the greatest value, not the greatest $k$ values, we don't need to sort the entire list again with `sort -rn`. Instead, we can loop through and only look for the greatest value, then returning it.
+Since we're only looking for the greatest value, not the greatest $k$ values, we don't need to sort the entire list of runs by length and return the first. Instead we can loop through and only look for the longest. 
 
-```diff
-  sort |
-  uniq -c |
-- sort -rn |
-- sed 1q
-+ { 
-+   let max_value
-+   let max_count = 0
-+   for x in $input: 
-+     if x[0] > max_count:
-+       max_value = x[1]
-+       max_count = x[0]
-+   return max_value
-+ }
+```python
+def most_common_1(word_list):
+	runs = unique_runs(
+		sort(
+			word_list
+		)
+	)
+	longest_run_value = ""
+	longest_run_length = 0
+	for run in runs:
+		if len(run) > longest_run_length:
+			longest_run_length = len(run)
+			# All values in the run are the
+			# same, so we'll just take the 
+			# first one. There will always be 
+			# at least one value in a run 
+			# by definition.
+			longest_run_value = run[0]
+	return longest_run_value
 ```
 
-> [!WARNING]  
-> This is no longer POSIX shell script: it's pseudocode based on POSIX shell script.
+### Optimization 
 
-Next, if we perform counting manually (instead of with `uniq -c`), we can use the assumption that there is a single ID that appears strictly more than 50% of the time in the input to optimize. Because the IDs are in order, there will be 1 run of identical items that is more than 50% of the length-- once we have found that run, we know that this is the most common ID, since even if every other ID is some other identical value, they won't surpass the 50%+ run. 
+Next we can perform run-length counting manually (instead of with `unique_runs`). This is doable in a single loop, because all the IDs are in order, and therefore all runs of identical values will be grouped together. Although this doesn't improve our time complexity, it *does* improve our total usage of space.
 
-```diff
-  sort |
-- uniq -c |
-  { 
-+   let run_length = 0
-+   let run_item
-    let max_value
-    let max_count = 0
-    for item in $input:
-+     if item != run_item:
-+       run_item = item
-+       run_length = 1
-+     else:
-+       run_length += 1
--     if x[0] > max_count:
--       max_value = x[1]
--       max_count = x[0]
-+     if run_length > max_count
-+       max_value = item
-+       max_count = run_length
-    return max_value
-  }
+We can use the assumption that there is a single ID that appears strictly more than 50% of the time in the input to optimize. Because the IDs are in order, there will be 1 run of identical items that is more than 50% of the length-- once we have found that run, we know that this is the most common ID, since *even if* every other ID is some other identical value, they won't surpass the 50%+ run. 
+
+```python
+def most_common_1(word_list):
+	sorted_words = sort(
+			word_list
+		)
+	current_run_item = ""
+	current_run_length = 0
+	
+	longest_run_value = ""
+	longest_run_length = 0
+	for item in sorted_words:
+		# Update run values before check length
+		if item != current_run_item:
+			current_run_item = item
+			current_run_length = 1
+		else:
+			current_run_length += 1
+		
+		# If the current run is bigger than
+		# 50%, return early 
+		if current_run_length > len(sorted_words)/2:
+	        return current_run_item
+
+		if len(run) > longest_run_length:
+			longest_run_length = len(run)
+			longest_run_value = run[0]
+	return longest_run_value
 ```
 
-The `diff` is messy, so here is the complete code for this step: 
 
-```bash
-sort |
-{ 
-  let run_length = 0
-  let run_item
-  let max_value
-  let max_count = 0
-  for item in $input:
-    if item != run_item:
-      run_item = item
-      run_length = 1
-    else:
-      run_length += 1
-    if x[0] > max_count:
-      max_value = x[1]
-      max_count = x[0]
-    if run_length > max_count
-      max_value = item
-      max_count = run_length
-  return max_value
-}
-```
-
-### Optimization
-
-We can, as an optimization, return early if we find the 50%+ run:
-
-```diff 
-@@ -16,5 +16,7 @@ 
-      if run_length > max_count
-        max_value = item
-        max_count = run_length
-+     if max_count > len($input)/2
-+       return max_value
-    return max_value
-```
-
-Further optimizations could fold the final iteration into the `sort`ing code, but that is beyond the scope of this assignment.
+Further optimizations could fold the final iteration into the `sort`ing code, but that will not decrease the time complexity, and is also beyond the scope of this assignment.
 
 ### Runtime Complexity and Correctness
 
