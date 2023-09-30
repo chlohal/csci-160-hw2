@@ -70,7 +70,7 @@ first_items(n=k,
 ```
 
 > [!NOTE]
-> A **run** in a list is defined as being a contiguous subarray where all the values are the same. For example, in `[1,2,3]`, there are 3 runs: `[1]`, `[2]`, and `[3]`. In `[2,2,2]`, there is only 1 run: `[2,2,2]`. This will be important later.
+> A **run** in a list is defined as being a contiguous sublist where all the values are the same. For example, in `[1,2,3]`, there are 3 runs: `[1]`, `[2]`, and `[3]`. In `[2,2,2]`, there is only 1 run: `[2,2,2]`. This will be important later.
 
 
 The adaptation and specialization of this solution for our specific problem will yield a working, efficient, 
