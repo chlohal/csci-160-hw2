@@ -32,6 +32,20 @@ Our code, in abstract, does the following:
 
 ## Question 2
 
+Pseudo-code:
+```
+function rotate_string(string):
+    length = string.length
+    if length > 1:
+        for i in range length:
+            print string
+            string = string[1:] + string[0]
+```
+
+This algorithm sets the length of the string to a variable. It then checks if the length is greater than 1. If it isn't, then the string already is rotated the maximum amount it can be. If it is, then it prints out the string and then sets the string equal to the slice of itself from the second character to the last with the first character appended to the end. This rotates the string by 1 character.
+
+Because this algorithm utilizes one for loop that runs as many times as the length of the string, this algorithm has time complexity O(n).
+
 ## Question 3
 
 With the assumption that IDs can be compared and that there is some ID that exists strictly more than 50% of the time in the input list, one can base a solution on the example of [Knuth and McIlroy's word count programs](https://www.cs.tufts.edu/~nr/cs257/archive/don-knuth/pearls-2.pdf). By modelling each ID as a word and setting $k=1$, the problem of "find the $k$ most common words in the file" becomes "find the single most common ID".
