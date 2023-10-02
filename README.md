@@ -33,6 +33,7 @@ Our code, in abstract, does the following:
 ## Question 2
 
 Pseudo-code:
+
 ```
 function rotate_string(string):
     length = string.length
