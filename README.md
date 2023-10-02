@@ -44,7 +44,7 @@ function rotate_string(string):
 
 This algorithm sets the length of the string to a variable. It then checks if the length is greater than 1. If it isn't, then the string already is rotated the maximum amount it can be. If it is, then it prints out the string and then sets the string equal to the slice of itself from the second character to the last with the first character appended to the end. This rotates the string by 1 character.
 
-This algorithm works because it takes into account every case listed on the hackerrank page. This algorithm cares only about the length of the string and not about the characters in that string. This means that even if all characters are the same, the algorithm still rotates the string as if they were all different.
+This algorithm works because it is a simple repetition of the rotation algorithm on the hackerrank page ($r = s_{1}s_{2}s_{3}\dots \implies r'=s_{2}s_{3}\dots s_{1}$). This repetition takes into account every case listed on the hackerrank page, which specifies that there are $n$ rotations for a string of length $n$. This algorithm cares only about the length of the string and not about the characters in that string. This means that even if all characters are the same, our implementation of the algorithm still rotates the string as if they were all different, therefore remaining in strict compliance.
 
 Because this algorithm utilizes one for loop that runs as many times as the length of the string, this algorithm has time complexity $O(n)$.
 
