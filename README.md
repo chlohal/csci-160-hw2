@@ -37,17 +37,14 @@ Pseudo-code:
 ```
 function rotate_string(string):
     length = string.length
-    if length > 1:
-        for i in range(length):
-            print(string)
-            string = string[1:] + string[0]
-    else:
+    for i in range(length):
         print(string)
+        string = string[1:] + string[0]
 ```
 
 This algorithm sets the length of the string to a variable. It then checks if the length is greater than 1. If it isn't, then the string already is rotated the maximum amount it can be. If it is, then it prints out the string and then sets the string equal to the slice of itself from the second character to the last with the first character appended to the end. This rotates the string by 1 character.
 
-Because this algorithm utilizes one for loop that runs as many times as the length of the string, this algorithm has time complexity O(n).
+Because this algorithm utilizes one for loop that runs as many times as the length of the string, this algorithm has time complexity $O(n)$.
 
 ## Question 3
 
