@@ -1,7 +1,7 @@
 # Homework 2
 
 Will, Wil, Chloe
-https://github.com/chlohal/cs-160-hw2
+<https://github.com/chlohal/cs-160-hw2>
 
 ## Question 1
 
