@@ -1,0 +1,11 @@
+on: [push]
+
+jobs:
+  submit_to_canvas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chlohal/gh-canvas
+        with:
+          canvas_base_url: "https://canvas.clarku.edu"
+          canvas_token: ${{ secrets.CANVAS_TOKEN }}
