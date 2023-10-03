@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: chlohal/gh-canvas
+      - uses: chlohal/gh-canvas@master
         with:
           canvas_base_url: "https://canvas.clarku.edu"
           canvas_token: ${{ secrets.CANVAS_TOKEN }}
