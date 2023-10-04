@@ -2,6 +2,7 @@ on: [push]
 
 jobs:
   submit_to_canvas:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
